@@ -29,7 +29,7 @@ function App() {
         playerResult = "loss";
         computerResult = "win"
       }
-      else{
+      if(computerChoice === 'scissors'){
         playerResult = "win";
         computerResult = "loss"
       }
@@ -40,7 +40,7 @@ function App() {
         playerResult = "loss";
         computerResult = "win"
       }
-      else{
+      if(computerChoice === 'rock'){
         playerResult = "win";
         computerResult = "loss"
       }
@@ -51,7 +51,7 @@ function App() {
         playerResult = "loss";
         computerResult = "win"
       }
-      else{
+      if(computerChoice === 'paper'){
         playerResult = "win";
         computerResult = "loss"
       }
