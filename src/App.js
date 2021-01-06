@@ -134,7 +134,7 @@ function App() {
           </ButtonGroup>
           <Button variant="secondary" onClick={restart}>Restart</Button>
       </Container>
-      {victory.count >= 3 ? <h1>{playerName} FlawVictory</h1> : null}
+      {victory.count >= 3 ? <h1>{victory.name} FlawVictory</h1> : null}
     </div>
   );
 }
