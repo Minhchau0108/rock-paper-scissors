@@ -1,80 +1,138 @@
-import React from 'react';
+import React, { useState }  from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import PublicNavbar from './components/PublicNavbar'
 import ChoiceCard from './components/ChoiceCard'
-import { Container, Button, Row, Col} from 'react-bootstrap';
+import { Container, Button, Row, Col, ButtonGroup} from 'react-bootstrap';
 
-
+let victory = {name : "", count : 0};
+function changeVictory(value){
+  if(victory.name === value){
+    victory.count += 1;
+  }
+  else if(victory.name === ""){
+    victory.count = 1;
+    victory.name = value;
+  }
+  else{
+    victory.name = "";
+    victory.count = 0;
+  }
+}
 function App() {
   const shapes = ['rock', 'paper', 'scissors'];
-  let computerChoice;
-  let playerChoice;
-  const randomMove = ()=>{
-    computerChoice = shapes[Math.floor(Math.random()*3)];
-    playerChoice = shapes[Math.floor(Math.random()*3)];
-    console.log('Computer:', computerChoice);
-    console.log('Player:', playerChoice);
+  const [playerChoice, setPlayerChoice] = useState('');
+  const [playerResult, setPlayerResult] = useState('tie');
+  const [playerScore, setPlayerScore] = useState(0);
+
+  const [computerChoice, setComputerChoice] = useState('');
+  const [computerResult, setComputerResult] = useState('tie');
+  const [computerScore, setComputerScore] = useState(0);
+
+  const [playerName, setPlayerName] = useState('You');
+
+  const randomMove = (move)=>{
+    const newComputerChoice = shapes[Math.floor(Math.random() * 3)];
+    // // const newPlayerChoice = shapes[Math.floor(Math.random() * 3)];
+    // const newComputerChoice = shapes[0];
+    // move = shapes[1];
+    setPlayerChoice(move);
+    setComputerChoice(newComputerChoice);
+    calculateWinner(newComputerChoice, move);
   }
-  let computerResult;
-  let playerResult;
-  const calculateWinner = ()=>{
-    if(playerChoice === computerChoice){
-      computerResult = "tie";
-      playerResult = "tie";
-    }
 
-    if(playerChoice === 'rock'){
-      if(computerChoice === 'paper'){
-        playerResult = "loss";
-        computerResult = "win"
-      }
-      if(computerChoice === 'scissors'){
-        playerResult = "win";
-        computerResult = "loss"
-      }
-    }
-
-    if(playerChoice === 'paper'){
-      if(computerChoice === 'scissors'){
-        playerResult = "loss";
-        computerResult = "win"
-      }
-      if(computerChoice === 'rock'){
-        playerResult = "win";
-        computerResult = "loss"
-      }
-    }
-
-    if(playerChoice === 'scissors'){
-      if(computerChoice === 'rock'){
-        playerResult = "loss";
-        computerResult = "win"
-      }
-      if(computerChoice === 'paper'){
-        playerResult = "win";
-        computerResult = "loss"
-      }
-    }
+  const calculateWinner = (computerChoice, playerChoice) => {
+    console.log(victory.count);
+    console.log(victory.name);
+        if (computerChoice === playerChoice) {
+          setComputerResult('tie');
+          setPlayerResult('tie');
+          victory.name = "";
+          victory.count = 0;
+        } else if (computerChoice === 'rock') {
+          if (playerChoice === 'paper') {
+            setComputerResult('loss');
+            setPlayerResult('win');
+            setPlayerScore(playerScore + 1);
+            changeVictory('player');
+          } else {
+            setComputerResult('win');
+            setPlayerResult('loss');
+            setComputerScore(computerScore + 1);
+            changeVictory('computer');
+          }
+        } else if (computerChoice === 'paper') {
+          if (playerChoice === 'scissors') {
+            setComputerResult('loss');
+            setPlayerResult('win');
+            setPlayerScore(playerScore + 1);
+            changeVictory('player');
+          } else {
+            setComputerResult('win');
+            setPlayerResult('loss');
+            setComputerScore(computerScore + 1);
+            changeVictory('computer');
+          }
+        } else {
+          if (playerChoice === 'rock') {
+            setComputerResult('loss');
+            setPlayerResult('win');
+            setPlayerScore(playerScore + 1);
+            changeVictory('player');
+          } else {
+            setComputerResult('win');
+            setPlayerResult('loss');
+            setComputerScore(computerScore + 1);
+            changeVictory('computer');
+          }
+        }
   }
-  const play = () =>{
-    randomMove();
-    calculateWinner();
-    console.log('playerResult', playerResult);
-    console.log('computerResult', computerResult);
-  }
-  play();
+  const restart = () =>{
+    setPlayerResult('win');
+    setPlayerScore(0);
+    setPlayerResult('tie');
 
+    setComputerResult('loss');
+    setComputerScore(0);
+    setComputerResult('tie');
+    victory.count = 0;
+    victory.name ="";
+  }
+  const handleChangeName = (event)=>{
+      setPlayerName(event.target.value);
+  }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  }
   return (
     <div className="App">
       <PublicNavbar/>
+      <form onSubmit={handleSubmit}>
+          <label>
+              Name:
+              <input type="text" onChange={handleChangeName} />
+          </label>
+          <input type="submit" value="Submit" />
+      </form>
       <Container>
         <Row>
-          <Col xs={12} md={6}><ChoiceCard title="You" winner={playerResult} shape={playerChoice}/></Col>
-          <Col xs={12} md={6}><ChoiceCard title="Computer" winner={computerResult} shape={computerChoice}/></Col>
+          <Col xs={12} md={6}><ChoiceCard title={playerName} winner={playerResult} shape={playerChoice} score={playerScore}/></Col>
+          <Col xs={12} md={6}><ChoiceCard title="Computer" winner={computerResult} shape={computerChoice} score={computerScore}/></Col>
         </Row>
-        <Button onClick={play}>Play Random</Button>
+          <ButtonGroup>
+            <Button variant="outline-dark" className="mx-1" onClick={() => randomMove('rock')}>
+              Play 👊
+            </Button>
+            <Button variant="outline-dark" className="mx-1" onClick={() => randomMove('paper')}>
+              Play 🤚
+            </Button>
+            <Button variant="outline-dark" className="mx-1" onClick={() => randomMove('scissors')}>
+              Play ✌
+            </Button>
+          </ButtonGroup>
+          <Button variant="secondary" onClick={restart}>Restart</Button>
       </Container>
+      {victory.count >= 3 ? <h1>FlawVictory</h1> : null}
     </div>
   );
 }
