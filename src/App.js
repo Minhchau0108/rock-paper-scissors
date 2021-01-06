@@ -29,13 +29,13 @@ function App() {
     calculateWinner(newComputerChoice, move);
   }
   const handleVictory = (value) =>{
-      if(value === "" || victory.name !== value){
+      if(value === ""){
         setVictory({name: "", count: 0});
       }
       if(victory.name === value){
           setVictory({name: value, count: victory.count + 1});
       }
-      if(victory.name === ""){
+      if(victory.name === "" || victory.name !== value ){
          setVictory({name: value, count: 1});
       }
     }
@@ -134,7 +134,7 @@ function App() {
           </ButtonGroup>
           <Button variant="secondary" onClick={restart}>Restart</Button>
       </Container>
-      {victory.count >= 3 ? <h1>{victory.name} FlawVictory</h1> : null}
+      {victory.count >= 3 ? <h1>{playerName} FlawVictory</h1> : null}
     </div>
   );
 }
