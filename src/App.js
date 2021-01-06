@@ -5,20 +5,6 @@ import PublicNavbar from './components/PublicNavbar'
 import ChoiceCard from './components/ChoiceCard'
 import { Container, Button, Row, Col, ButtonGroup} from 'react-bootstrap';
 
-let victory = {name : "", count : 0};
-function changeVictory(value){
-  if(victory.name === value){
-    victory.count += 1;
-  }
-  else if(victory.name === ""){
-    victory.count = 1;
-    victory.name = value;
-  }
-  else{
-    victory.name = "";
-    victory.count = 0;
-  }
-}
 function App() {
   const shapes = ['rock', 'paper', 'scissors'];
   const [playerChoice, setPlayerChoice] = useState('');
@@ -30,60 +16,76 @@ function App() {
   const [computerScore, setComputerScore] = useState(0);
 
   const [playerName, setPlayerName] = useState('You');
+  const [victory, setVictory] = useState({name: "", count : 0});
+
 
   const randomMove = (move)=>{
     const newComputerChoice = shapes[Math.floor(Math.random() * 3)];
-    // // const newPlayerChoice = shapes[Math.floor(Math.random() * 3)];
+    // const newPlayerChoice = shapes[Math.floor(Math.random() * 3)];
     // const newComputerChoice = shapes[0];
     // move = shapes[1];
     setPlayerChoice(move);
     setComputerChoice(newComputerChoice);
     calculateWinner(newComputerChoice, move);
   }
-
+  const handleVictory = (value) =>{
+      if(value === "" || victory.name !== value){
+        setVictory({name: "", count: 0});
+      }
+      if(victory.name === value){
+          setVictory({name: value, count: victory.count + 1});
+      }
+      if(victory.name === ""){
+         setVictory({name: value, count: 1});
+      }
+    }
+  
   const calculateWinner = (computerChoice, playerChoice) => {
-    console.log(victory.count);
-    console.log(victory.name);
         if (computerChoice === playerChoice) {
           setComputerResult('tie');
           setPlayerResult('tie');
-          victory.name = "";
-          victory.count = 0;
-        } else if (computerChoice === 'rock') {
+          handleVictory("");
+        } 
+        if (computerChoice === 'rock') {
           if (playerChoice === 'paper') {
             setComputerResult('loss');
             setPlayerResult('win');
             setPlayerScore(playerScore + 1);
-            changeVictory('player');
-          } else {
+            handleVictory('player');
+          } 
+          if (playerChoice === 'scissors') {
             setComputerResult('win');
             setPlayerResult('loss');
             setComputerScore(computerScore + 1);
-            changeVictory('computer');
+            handleVictory('computer');
           }
-        } else if (computerChoice === 'paper') {
+        } 
+        if (computerChoice === 'paper') {
           if (playerChoice === 'scissors') {
             setComputerResult('loss');
             setPlayerResult('win');
             setPlayerScore(playerScore + 1);
-            changeVictory('player');
-          } else {
+            handleVictory('player');
+          } 
+          if (playerChoice === 'rock') {
             setComputerResult('win');
             setPlayerResult('loss');
             setComputerScore(computerScore + 1);
-            changeVictory('computer');
+            handleVictory('computer');
           }
-        } else {
+        } 
+        if (computerChoice === 'scissors'){
           if (playerChoice === 'rock') {
             setComputerResult('loss');
             setPlayerResult('win');
             setPlayerScore(playerScore + 1);
-            changeVictory('player');
-          } else {
+            handleVictory('player');
+          } 
+          if (playerChoice === 'paper') {
             setComputerResult('win');
             setPlayerResult('loss');
             setComputerScore(computerScore + 1);
-            changeVictory('computer');
+            handleVictory('computer');
           }
         }
   }
@@ -95,8 +97,8 @@ function App() {
     setComputerResult('loss');
     setComputerScore(0);
     setComputerResult('tie');
-    victory.count = 0;
-    victory.name ="";
+    setPlayerName("You");
+    setVictory({name: "",count:0})
   }
   const handleChangeName = (event)=>{
       setPlayerName(event.target.value);
@@ -132,7 +134,7 @@ function App() {
           </ButtonGroup>
           <Button variant="secondary" onClick={restart}>Restart</Button>
       </Container>
-      {victory.count >= 3 ? <h1>FlawVictory</h1> : null}
+      {victory.count >= 3 ? <h1>{victory.name} FlawVictory</h1> : null}
     </div>
   );
 }
